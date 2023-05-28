@@ -19,7 +19,7 @@ def get_args():
     parser.add_argument('-c', '--connections', default='30', help="Set the max number of simultaneous connections allowed, default=30")
     parser.add_argument('-r', '--ratelimit', default='0', help="Rate in requests per minute, default=0")
     parser.add_argument('--basic', help="Use HTTP Basic Auth to login", action="store_true")
-    parser.add_argument('-k', '--cookie',help="Cookie key; --cookie SessionID=afgh3193e9103bca9318031bcdf")
+    parser.add_argument('-k', '--cookie', nargs='+', help="Cookies; --cookie key1=value1 key2=value2")
     args = parser.parse_args()
     return args
 
@@ -29,14 +29,17 @@ def main():
     if rate not in [None, '0']:
         rate = str(60 / float(rate))
     try:
-        cookie_key = args.cookie.split('=',1)[0] if args.cookie else None
-        cookie_value = ''.join(args.cookie.split('=',1)[1:]) if args.cookie else None
-       execute(['scrapy', 'crawl', 'xsscrapy',
-         '-a', 'url=%s' % args.url, '-a', 'user=%s' % args.login, '-a',
-         'pw=%s' % args.password, '-a', 'basic=%s' % args.basic,
-         '-a', 'cookie=%s' % args.cookie,
-         '-s', 'CONCURRENT_REQUESTS=%s' % args.connections,
-         '-s', 'DOWNLOAD_DELAY=%s' % rate])
+        cookies = {}
+        if args.cookie:
+            for cookie in args.cookie:
+                key, value = cookie.split('=', 1)
+                cookies[key] = value
+        execute(['scrapy', 'crawl', 'xsscrapy',
+                 '-a', 'url=%s' % args.url, '-a', 'user=%s' % args.login, '-a',
+                 'pw=%s' % args.password, '-a', 'basic=%s' % args.basic,
+                 '-a', 'cookies=%s' % cookies,
+                 '-s', 'CONCURRENT_REQUESTS=%s' % args.connections,
+                 '-s', 'DOWNLOAD_DELAY=%s' % rate])
     except KeyboardInterrupt:
         sys.exit()
 
