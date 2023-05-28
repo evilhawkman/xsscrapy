@@ -31,12 +31,12 @@ def main():
     try:
         cookie_key = args.cookie.split('=',1)[0] if args.cookie else None
         cookie_value = ''.join(args.cookie.split('=',1)[1:]) if args.cookie else None
-        execute(['scrapy', 'crawl', 'xsscrapy',
-                 '-a', 'url=%s' % args.url, '-a', 'user=%s' % args.login, '-a',
-                 'pw=%s' % args.password, '-a', 'basic=%s' % args.basic,
-                 '-a', 'cookie_key=%s' % cookie_key, '-a', 'cookie_value=%s' % cookie_value,
-                 '-s', 'CONCURRENT_REQUESTS=%s' % args.connections,
-                 '-s', 'DOWNLOAD_DELAY=%s' % rate])
+       execute(['scrapy', 'crawl', 'xsscrapy',
+         '-a', 'url=%s' % args.url, '-a', 'user=%s' % args.login, '-a',
+         'pw=%s' % args.password, '-a', 'basic=%s' % args.basic,
+         '-a', 'cookie=%s' % args.cookie,
+         '-s', 'CONCURRENT_REQUESTS=%s' % args.connections,
+         '-s', 'DOWNLOAD_DELAY=%s' % rate])
     except KeyboardInterrupt:
         sys.exit()
 
